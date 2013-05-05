@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Maze Tree</title>
+
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/svg.css">
+  <link rel="stylesheet" type="text/css" href="css/ui_styles.css" />
+  <link rel="stylesheet" type="text/css" href="css/info.css" />
+  <!--background -->
+  <link type="text/css" rel="stylesheet" media="all" href="css/fancymenu.css" />
+		<!--popup window
+		<script type="text/javascript" src="js/popup/popup.js"></script>
+
+		<link rel="stylesheet" href="js/popup/style-popup.css" />
+	-->
+
+    <!--JavaScript resorces-->
+    <script src="js/libs/d3.v3.min.js"></script>
+    <script src="js/libs/jquery-1.9.1.min.js"></script>
+    <script src="js/common.js"></script>
+
+    <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-37639745-1']);
+    _gaq.push(['_setDomainName', 'prcweb.co.uk']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+  </script>
+</head>
+
+<body>
+  <button class="regenerate">Seed</button>
+<!-- 		<button id="show">Info</button>
+		<div id="obscuring-layer"></div>
+		<div id="popup"><p> Display here the information</p><p>(<a id="hide">x</a>)</p></div> -->
+
+		
+		<!--show info-->
+
+		<div id="container"></div>
+        <div id="info" style="height:260px">
+            <h3>The Maze</h3>
+            <p>Development by Monotone Studio</p>
+            
+        </div>
+        <div id="infoBt">
+            <a href="#" onclick="showInfo()"><img src="images/info.png" /></a>
+        </div>
+
+
+        <div id="chart">
+         <svg>
+         </svg>
+     </div>
+
+     <script src="js/style-test2.js"></script>
+
+
+     <!-- Twitter -->
+     <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="https://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+     <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+ </body>
+ </html>
