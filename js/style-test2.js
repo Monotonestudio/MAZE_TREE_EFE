@@ -157,6 +157,7 @@ function highlightAndPlayParents(d) {
 		d = branches[d.parent];
 	} 
 	treeSchedular.currentBranch = endBranch;
+	treeSchedular.startBranch = endBranch;
 	treeSchedular.schedule();
 }
 
@@ -254,10 +255,6 @@ d3.selectAll('.regenerate')
 d3.selectAll('.stopAllBuffers')
 	.on('click', stopAllBuffers);
 
-function stopAllBuffers() {
-	console.log("to be implemented, sorry");
-}
-
 function init() {
   context = new webkitAudioContext();
 
@@ -278,7 +275,6 @@ function init() {
 }
 
 function finishedLoading(bufferList) {
-	console.log("hier komt ie niet eens");
 	bufferProvider = new BufferProvider(bufferList);
 	console.log(" bufferProvidercount " + bufferProvider.totalNumberOfBuffers);
 
@@ -488,6 +484,7 @@ AudioNode.prototype.stop = function() {
 }
 
 function stopAllBuffers() {
+	clearTimeout(treeSchedular.timer);
 	var i;
 	var amount = branches.length;
 	for (i=0 ; i<amount ; i++) {
@@ -509,8 +506,10 @@ BufferProvider.prototype.provideBuffer = function () {
 }
 
 function TreeSchedular () {
+	this.startBranch = null;
 	this.currentBranch = null;
 	this.previousBranch = null;
+	this.timer = null;
 }
 
 TreeSchedular.prototype.schedule = function () {
@@ -526,9 +525,14 @@ TreeSchedular.prototype.schedule = function () {
 	this.currentBranch = branches[this.currentBranch.parent]; // assign the parrent as current branch
 
 	if (this.currentBranch) { // if there is a parent, schedule next playing'
-		setTimeout(function() {
+		this.timer = setTimeout(function() {
 			treeSchedular.schedule();
 		} , beatDur);
+	} else {
+		this.timer = setTimeout( function() {
+			treeSchedular.currentBranch = treeSchedular.startBranch;
+			treeSchedular.schedule();
+		}, beatDur);	
 	}
 }
 
