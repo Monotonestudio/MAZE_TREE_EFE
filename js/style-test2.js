@@ -10,9 +10,9 @@ var startAngle;
 var seed;
 var pointOnEdge;
 
-var da = 0.; // Angle delta
+var da = 0.5; // Angle delta
 var dl = 0.87; // Length delta (factor)
-var ar = 2.; // Randomness
+var ar = 1.; // Randomness
 var maxDepth = 5;
 var branchLength = 200;
 
@@ -321,7 +321,7 @@ BufferLoader.prototype.loadBuffer = function(url, index) {
     }
 
     request.onerror = function() {
-        alert('BufferLoader: XHR error');        
+        alert('BufferLoader: XHR error, is this file not located in httpdocs of a server ?');        
     }
 
     request.send();
@@ -351,7 +351,7 @@ AudioNode.prototype.playBuffer = function() {
 	this.source.buffer = this.buffer; // assign buffer
 
 	this.gainer = context.createGainNode(); // create a gain node
-	this.gainer.gain.value = 0.1; 
+	this.gainer.gain.value = 0.5; 
 
 	this.source.connect(this.gainer);
 	this.gainer.connect(context.destination); // source -> gain -> output
@@ -518,7 +518,9 @@ TreeSchedular.prototype.schedule = function () {
 	if (this.previousBranch) {
 		this.previousBranch.audioNode.stop(); // stop the previous branch from playing
 	};
-	this.currentBranch.audioNode.playBufferWithFilterFX(); // play the current branch buffer.
+	//this.currentBranch.audioNode.playBufferWithFilterFX(); // play the current branch buffer.
+	this.currentBranch.audioNode.playBuffer(); // play the current branch buffer.
+
 
 	this.previousBranch = this.currentBranch;
 	this.currentBranch = branches[this.currentBranch.parent]; // assign the parrent as current branch
@@ -534,7 +536,7 @@ function mtof (midiNoteNumber) {
 	return 440 * (Math.pow(2.0,(midiNoteNumber-69.0)/12.0));
 }
 
-var beatDur = 500;
+var beatDur = 750;
 var treeSchedular = new TreeSchedular();
 
 var context;
