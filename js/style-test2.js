@@ -485,11 +485,15 @@ AudioNode.prototype.stop = function() {
 
 function stopAllBuffers() {
 	clearTimeout(treeSchedular.timer);
+	treeSchedular.previousBranch.audioNode.stop();
+	treeSchedular.currentBranch.audioNode.stop();
+	/*
 	var i;
 	var amount = branches.length;
 	for (i=0 ; i<amount ; i++) {
 		branches[i].audioNode.stop();
 	}
+	*/
 }
 
 function BufferProvider(bufferlist) { // this takes care of providing a buffer to every AudioNode
