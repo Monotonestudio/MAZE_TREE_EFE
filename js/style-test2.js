@@ -204,7 +204,7 @@ function update() {
 		.selectAll('line')
 		.data(branches)
 		.transition()
-		.duration(1000)
+		.duration(100)
 		.attr('x1', x1)
 		.attr('y1', y1)
 		.attr('x2', x2)
@@ -214,7 +214,7 @@ function update() {
 		.selectAll('circle')
 		.data(branches)
 		.transition()
-		.duration(1000)
+		.duration(100)
 		.attr('cx',x1)
 		.attr('cy',y1)
 		.attr("r", function(d) {
