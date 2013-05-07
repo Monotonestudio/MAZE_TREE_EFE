@@ -88,7 +88,6 @@ function branch(b) {
 	branches.push(b);
 
 	if (b.d === maxDepth) {
-		console.log("branches lenght" + branches.length);
 		return;
 	}
 
@@ -399,59 +398,21 @@ AudioNode.prototype.playBufferWithDelayFX = function() {
 	this.source.noteGrainOn(0,randomOffset,randomDuration); // start playing now, with offset and random duration
 }
 
-AudioNode.prototype.playBufferWithDelayFX = function() {
-
+AudioNode.prototype.playBufferWithDelayBankFX = function() {
 	if (this.source) {
 		this.source.noteOff(0); // release any playing nodes
 	}
 	this.source = this.context.createBufferSource();
 	this.source.buffer = this.buffer; // assign buffer
 
-	this.gainer = context.createGainNode(); // create a gain node
-	this.gainer.gain.value = 0.1; 
+	var gainer = context.createGainNode(); // create a gain node
+	gainer.gain.value = 0.1; 
 
-	this.delay = context.createDelayNode(1.0); // create a delay node, max delay 3 seconds;
-	this.delay.delayTime.value = 0.1;
+	var delaybank = new DelayBankNode();
 
-	this.delay2 = context.createDelayNode(1.0);
-	this.delay2.delayTime.value = 0.145;
-
-
-	this.fbgain = context.createGainNode();
-	this.fbgain.gain.value = 0.75;
-
-	/*
-	connection scheme:
-
-	source -> gainer -> output
-	gainer -> delay -> fbgain -> delay
-	delay -> output
-	*/
-
-	this.source.connect(this.gainer);
-	this.gainer.connect(this.delay);
-	this.delay.connect(this.fbgain);
-	this.fbgain.connect(this.delay);
-	this.gainer.connect(context.destination); 
-	this.delay.connect(context.destination);
-
-	
-	this.source.loop = true; // loop
-	var randomDuration = (Math.random() * 0.5) + 0.25; 
-	var randomOffset = Math.random() * 4;
-	this.source.noteGrainOn(0,randomOffset,randomDuration); // start playing now, with offset and random duration
-}
-
-AudioNode.prototype.playBufferWithDelayFX = function() {
-
-	if (this.source) {
-		this.source.noteOff(0); // release any playing nodes
-	}
-	this.source = this.context.createBufferSource();
-	this.source.buffer = this.buffer; // assign buffer
-
-	this.gainer = context.createGainNode(); // create a gain node
-	this.gainer.gain.value = 0.1; 
+	this.source.connect(gainer);
+	gainer.connect(delaybank.input);
+	delaybank.connect(context.destination);
 
 	this.source.loop = true; // loop
 	var randomDuration = (Math.random() * 0.5) + 0.25; 
@@ -545,8 +506,8 @@ TreeSchedular.prototype.schedule = function () {
 		this.previousBranch.audioNode.stop(); // stop the previous branch from playing
 	};
 	//this.currentBranch.audioNode.playBufferWithFilterFX(); // play the current branch buffer.
-	this.currentBranch.audioNode.playBuffer(); // play the current branch buffer.
-
+	//this.currentBranch.audioNode.playBuffer(); // play the current branch buffer.
+	this.currentBranch.audioNode.playBufferWithDelayBankFX();
 
 	this.previousBranch = this.currentBranch;
 	this.currentBranch = branches[this.currentBranch.parent]; // assign the parrent as current branch
@@ -571,8 +532,8 @@ function DelayBankNode () {
 	this.input = context.createGainNode();
 	this.output = context.createGainNode();
 
-	var delayBank = new array(0);
-	var gainBank = new array(0);
+	this.delayBank = new Array(0);
+	this.gainBank = new Array(0);
 
 	var amount = 5;
 
@@ -584,19 +545,19 @@ function DelayBankNode () {
 	*/
 
 	for (var i = 0; i < amount ; i++) {
-		gainBank.push(context.createGainNode());
-		gainBank.gain.value = 1.0;
+		this.gainBank.push(context.createGainNode());
+		this.gainBank[i].gain.value = 1.0;
 
-		delayBank.push(context.createDelayNode(1.0));
-		input.connect(gainBank[i]);
+		this.delayBank.push(context.createDelayNode(1.0));
+		this.input.connect(this.gainBank[i]);
 
-		gainBank[i].connect(delayBank[i])
-		gainBank[i].connect(this.output);
+		this.gainBank[i].connect(this.delayBank[i])
+		this.delayBank[i].connect(this.output);
 
-		delayBank.delayTime.value = Math.random();
+		this.delayBank[i].delayTime.value = Math.random() * 0.7;
 	}
 
-	this.output.gain.value = 1.0 / (amount * 0.7);
+	this.output.gain.value = 1;
 }
 
 DelayBankNode.prototype.connect = function(target) {
@@ -607,7 +568,7 @@ DelayBankNode.prototype.disconnect = function() {
 	this.output.disconnect();
 }
 
-var beatDur = 750;
+var beatDur = 1500;
 var treeSchedular = new TreeSchedular();
 
 var context;
