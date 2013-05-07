@@ -35,7 +35,7 @@ var path = d3.svg.chord()
     .radius(innerRadius);
 
 
-var dt = 165;//time interval 
+var dt = 200;//time interval 
 var t = dt;//timer
 
 //popup window
@@ -87,8 +87,10 @@ function branch(b) {
 
 	branches.push(b);
 
-	if (b.d === maxDepth)
+	if (b.d === maxDepth) {
+		console.log("branches lenght" + branches.length);
 		return;
+	}
 
 	// Left branch
 	daR = ar * Math.random() - ar * 0.5;
@@ -411,6 +413,10 @@ AudioNode.prototype.playBufferWithDelayFX = function() {
 	this.delay = context.createDelayNode(1.0); // create a delay node, max delay 3 seconds;
 	this.delay.delayTime.value = 0.1;
 
+	this.delay2 = context.createDelayNode(1.0);
+	this.delay2.delayTime.value = 0.145;
+
+
 	this.fbgain = context.createGainNode();
 	this.fbgain.gain.value = 0.75;
 
@@ -430,6 +436,23 @@ AudioNode.prototype.playBufferWithDelayFX = function() {
 	this.delay.connect(context.destination);
 
 	
+	this.source.loop = true; // loop
+	var randomDuration = (Math.random() * 0.5) + 0.25; 
+	var randomOffset = Math.random() * 4;
+	this.source.noteGrainOn(0,randomOffset,randomDuration); // start playing now, with offset and random duration
+}
+
+AudioNode.prototype.playBufferWithDelayFX = function() {
+
+	if (this.source) {
+		this.source.noteOff(0); // release any playing nodes
+	}
+	this.source = this.context.createBufferSource();
+	this.source.buffer = this.buffer; // assign buffer
+
+	this.gainer = context.createGainNode(); // create a gain node
+	this.gainer.gain.value = 0.1; 
+
 	this.source.loop = true; // loop
 	var randomDuration = (Math.random() * 0.5) + 0.25; 
 	var randomOffset = Math.random() * 4;
@@ -541,7 +564,47 @@ TreeSchedular.prototype.schedule = function () {
 }
 
 function mtof (midiNoteNumber) {
-	return 440 * (Math.pow(2.0,(midiNoteNumber-69.0)/12.0));
+	return 440 * (Math.pow(2.0, (midiNoteNumber-69.0) /12.0 ));
+}
+
+function DelayBankNode () {
+	this.input = context.createGainNode();
+	this.output = context.createGainNode();
+
+	var delayBank = new array(0);
+	var gainBank = new array(0);
+
+	var amount = 5;
+
+	/*
+				/----- gain --> delay ---\
+	input ------------ gain --> delay -------> output
+				\----- gain --> delay ---/
+
+	*/
+
+	for (var i = 0; i < amount ; i++) {
+		gainBank.push(context.createGainNode());
+		gainBank.gain.value = 1.0;
+
+		delayBank.push(context.createDelayNode(1.0));
+		input.connect(gainBank[i]);
+
+		gainBank[i].connect(delayBank[i])
+		gainBank[i].connect(this.output);
+
+		delayBank.delayTime.value = Math.random();
+	}
+
+	this.output.gain.value = 1.0 / (amount * 0.7);
+}
+
+DelayBankNode.prototype.connect = function(target) {
+	this.output.connect(target);
+}
+
+DelayBankNode.prototype.disconnect = function() {
+	this.output.disconnect();
 }
 
 var beatDur = 750;
